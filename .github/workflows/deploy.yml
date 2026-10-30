@@ -1,0 +1,88 @@
+# Builds the VR-osvita image on every push to main; the deploy job (upload to the shared VPS) runs on push only
+# when the repository variable AUTO_DEPLOY is 1, otherwise by hand from the Actions tab (Run workflow).
+# Repository secrets: DEPLOY_HOST, DEPLOY_USER (root), DEPLOY_SSH_KEY, DOMAIN, ADMIN_PASSWORD;
+# optional DEPLOY_PORT, R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY / R2_BUCKET / R2_ENDPOINT (Cloudflare R2 for APK/OBB).
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency: deploy
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # The image is built here, not on the shared VPS (builds there froze every site on it).
+      - name: Build image
+        run: |
+          docker build -t education-xr-app:latest .
+          docker save education-xr-app:latest | gzip -1 > /tmp/images.tar.gz
+          ls -lh /tmp/images.tar.gz
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: image
+          path: /tmp/images.tar.gz
+          retention-days: 3
+          compression-level: 0
+
+  deploy:
+    needs: build
+    if: github.event_name == 'workflow_dispatch' || vars.AUTO_DEPLOY == '1'
+    runs-on: ubuntu-latest
+    env:
+      HOST: ${{ secrets.DEPLOY_HOST || vars.DEPLOY_HOST }}
+      USER: ${{ secrets.DEPLOY_USER || vars.DEPLOY_USER || 'root' }}
+      PORT: ${{ secrets.DEPLOY_PORT || vars.DEPLOY_PORT || '22' }}
+      DOMAIN: ${{ secrets.DOMAIN || vars.DOMAIN }}
+      HAS_KEY: ${{ secrets.DEPLOY_SSH_KEY != '' }}
+    steps:
+      - name: Check secrets
+        id: check
+        run: |
+          for v in HOST DOMAIN; do [ -n "$(printenv $v)" ] && echo "$v: set" || echo "$v: MISSING"; done
+          echo "DEPLOY_SSH_KEY set: $HAS_KEY"
+          echo "ADMIN_PASSWORD set: ${{ secrets.ADMIN_PASSWORD != '' }}"
+          if [ -z "$HOST" ] || [ -z "$DOMAIN" ] || [ "$HAS_KEY" != true ]; then
+            echo "::warning::DEPLOY_HOST, DOMAIN or DEPLOY_SSH_KEY is not set, skipping deploy"; echo "go=0" >> "$GITHUB_OUTPUT"
+          else echo "go=1" >> "$GITHUB_OUTPUT"; fi
+
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.go == '1'
+
+      - uses: actions/download-artifact@v4
+        if: steps.check.outputs.go == '1'
+        with:
+          name: image
+          path: /tmp
+
+      - name: SSH key
+        if: steps.check.outputs.go == '1'
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" | tr -d '\r' > ~/.ssh/id_deploy && chmod 600 ~/.ssh/id_deploy
+          ssh-keygen -lf ~/.ssh/id_deploy >/dev/null || echo "::error::DEPLOY_SSH_KEY is not a valid private key"
+          ssh-keyscan -p "$PORT" "$HOST" >> ~/.ssh/known_hosts
+
+      - name: Upload code
+        if: steps.check.outputs.go == '1'
+        run: |
+          ssh -o ServerAliveInterval=30 -i ~/.ssh/id_deploy -p "$PORT" "$USER@$HOST" 'mkdir -p /opt/education-xr && command -v rsync >/dev/null || (apt-get update -qq && apt-get install -y -qq rsync)'
+          rsync -az --delete -e "ssh -o ServerAliveInterval=30 -i ~/.ssh/id_deploy -p $PORT" \
+            --exclude .git --exclude /.env --exclude /.env.app --exclude vendor --exclude node_modules \
+            ./ "$USER@$HOST:/opt/education-xr/"
+
+      - name: Upload image
+        if: steps.check.outputs.go == '1'
+        run: ssh -o ServerAliveInterval=30 -i ~/.ssh/id_deploy -p "$PORT" "$USER@$HOST" 'gunzip | docker load' < /tmp/images.tar.gz
+
+      - name: Start
+        if: steps.check.outputs.go == '1'
+        run: |
+          ssh -o ServerAliveInterval=30 -i ~/.ssh/id_deploy -p "$PORT" "$USER@$HOST" \
+            "PREBUILT=1 DOMAIN='$DOMAIN' ADMIN_PASSWORD='${{ secrets.ADMIN_PASSWORD }}' R2_ACCESS_KEY_ID='${{ secrets.R2_ACCESS_KEY_ID }}' R2_SECRET_ACCESS_KEY='${{ secrets.R2_SECRET_ACCESS_KEY }}' R2_BUCKET='${{ secrets.R2_BUCKET }}' R2_ENDPOINT='${{ secrets.R2_ENDPOINT }}' LIQPAY_PUBLIC_KEY='${{ secrets.LIQPAY_PUBLIC_KEY }}' LIQPAY_PRIVATE_KEY='${{ secrets.LIQPAY_PRIVATE_KEY }}' sh /opt/education-xr/deploy/remote.sh"
