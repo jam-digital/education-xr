@@ -39,7 +39,13 @@ mkdir -p /opt/caddy-sites
 sed "s|EDU_DOMAIN|$DOMAIN|" deploy/education-xr.caddy > /opt/caddy-sites/education-xr.caddy
 CADDY="$(docker ps -qf label=com.docker.compose.project=mincult -f label=com.docker.compose.service=caddy | head -1)"
 if [ -n "$CADDY" ] && docker exec "$CADDY" test -f /etc/caddy/sites/education-xr.caddy; then
-  docker exec "$CADDY" caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile
+  # одна невалідна *.caddy зупиняє reload для всіх сайтів сервера: спершу validate, і при помилці прибираємо свій файл
+  if docker exec "$CADDY" caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile; then
+    docker exec "$CADDY" caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile
+  else
+    rm -f /opt/caddy-sites/education-xr.caddy
+    echo "::error::caddy validate failed, education-xr.caddy removed, other sites untouched"; exit 1
+  fi
 else
   echo "::warning::Caddy of the museum portal does not mount /opt/caddy-sites; the site is not reachable from outside"
 fi
