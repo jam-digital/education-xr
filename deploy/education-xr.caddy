@@ -1,0 +1,9 @@
+# Site block for the Caddy of the museum portal (/opt/mincult): remote.sh copies it to /opt/caddy-sites/education-xr.caddy
+# with EDU_DOMAIN replaced by DOMAIN. Caddy gets the Let's Encrypt certificate itself.
+EDU_DOMAIN {
+	encode zstd gzip
+	request_body {
+		max_size 80MB
+	}
+	reverse_proxy eduxr-web:80
+}

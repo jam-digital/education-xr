@@ -1,0 +1,14 @@
+# Live VPS (спільний з музейним порталом): порти 80/443 тримає Caddy порталу (/opt/mincult).
+# Наш nginx нічого не публікує, а підключається до мережі mincult_default під іменем eduxr-web.
+services:
+  edu-web:
+    ports: !reset []
+    networks:
+      default: {}
+      mincult:
+        aliases: [eduxr-web]
+
+networks:
+  mincult:
+    name: mincult_default
+    external: true
