@@ -2,7 +2,7 @@
 
 @section('content')
 <section class="hero">
-  <div class="hero-logo"><img src="{{ asset('img/logo-white.svg') }}" alt="VR-освіта"><div class="sub">Віртуальні лабораторії для школи</div></div>
+  <div class="hero-logo"><img src="{{ asset('img/logo.svg') }}" alt="VR-освіта"><div class="sub">Віртуальні лабораторії для школи</div></div>
   <h1>VR-уроки з фізики, хімії та математики<br>для вашого класу</h1>
   <p class="lead">Інтерактивні VR-лабораторії для Meta Quest і Pico: досліди з оптики, електрики й хімічних реакцій, стереометрія в просторі, подорож усередину клітини. Пакети запусків або безліміт на навчальний рік для шкіл, ліцеїв і освітніх центрів.</p>
   <div class="row">

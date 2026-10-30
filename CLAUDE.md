@@ -12,3 +12,4 @@
 - Перед push: `vendor/bin/pint` і `php artisan test`.
 - VPS спільний з іншими проєктами: Docker-образи збирати лише на GitHub Actions, деплоїти по одному. Сервіси `edu-*`, псевдонім `eduxr-web` мають бути унікальними на сервері.
 - Аватар без фото: кругла плашка з двома літерами (`Filament/Support/InitialsAvatar`).
+- Тема світла, сіро-біла (Дмитро, 30.10.2026): адмінка `darkMode(false)` + `public/css/admin.css`, лендінг `public/css/landing.css`, логотип `public/img/logo.svg`.

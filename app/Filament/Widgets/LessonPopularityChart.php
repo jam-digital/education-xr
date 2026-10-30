@@ -48,14 +48,14 @@ class LessonPopularityChart extends ChartWidget
                 [
                     'label' => 'Проведено уроків',
                     'data' => $lessons->map(fn ($a) => (int) ($stats[$a->id]->sessions ?? 0))->all(),
-                    'backgroundColor' => '#8b5cf6',
+                    'backgroundColor' => '#374151',
                     'borderRadius' => 4,
                     'yAxisID' => 'y',
                 ],
                 [
                     'label' => 'Сер. час, хв',
                     'data' => $lessons->map(fn ($a) => round(($stats[$a->id]->avg_sec ?? 0) / 60, 1))->all(),
-                    'backgroundColor' => '#f59e0b',
+                    'backgroundColor' => '#9ca3af',
                     'borderRadius' => 4,
                     'yAxisID' => 'y1',
                 ],

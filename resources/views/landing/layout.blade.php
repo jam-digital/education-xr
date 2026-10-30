@@ -13,7 +13,7 @@
 <body>
 <div class="bg" aria-hidden="true"></div>
 <header class="nav">
-  <a class="brand" href="{{ route('landing') }}"><img src="{{ asset('img/logo-white.svg') }}" alt="VR-освіта"></a>
+  <a class="brand" href="{{ route('landing') }}"><img src="{{ asset('img/logo.svg') }}" alt="VR-освіта"></a>
   <nav class="links">
     <a href="{{ route('landing') }}#lessons">Уроки</a>
     <a href="{{ route('landing') }}#how">Як це працює</a>
@@ -26,7 +26,7 @@
 @yield('content')
 </main>
 <footer class="footer">
-  <div><img src="{{ asset('img/logo-white.svg') }}" alt="VR-освіта" class="footlogo"><div class="muted">Освітня VR-платформа · {{ parse_url(config('app.url'), PHP_URL_HOST) }}</div></div>
+  <div><img src="{{ asset('img/logo.svg') }}" alt="VR-освіта" class="footlogo"><div class="muted">Освітня VR-платформа · {{ parse_url(config('app.url'), PHP_URL_HOST) }}</div></div>
   <div class="muted">
     <a href="mailto:{{ config('vrosvita.contact.email') }}">{{ config('vrosvita.contact.email') }}</a>
     @if(config('vrosvita.contact.phone')) · <a href="tel:{{ preg_replace('/[^+\d]/', '', config('vrosvita.contact.phone')) }}">{{ config('vrosvita.contact.phone') }}</a>@endif

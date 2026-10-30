@@ -29,13 +29,13 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->brandName('VR-освіта')
-            ->brandLogo(asset('img/logo-white.svg'))
+            ->brandLogo(asset('img/logo.svg'))
             ->brandLogoHeight('1.6rem')
-            ->darkMode(isForced: true)
+            ->darkMode(false)
             ->favicon(asset('favicon.svg'))
             ->font('Inter')
             ->colors([
-                'primary' => Color::Violet,
+                'primary' => Color::Slate,
                 'gray' => Color::Zinc,
             ])
             ->defaultAvatarProvider(InitialsAvatar::class)
@@ -49,7 +49,7 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('Система')->collapsed(),
             ])
             ->renderHook(PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE, fn () => '<div class="xr-login-sub">Адмінпанель освітньої VR-платформи</div>')
-            ->renderHook(PanelsRenderHook::HEAD_END, fn () => '<link rel="stylesheet" href="'.asset('css/admin.css').'?v=2"><script src="'.asset('js/build-upload.js').'?v=1"></script>')
+            ->renderHook(PanelsRenderHook::HEAD_END, fn () => '<link rel="stylesheet" href="'.asset('css/admin.css').'?v=3"><script src="'.asset('js/build-upload.js').'?v=1"></script>')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')

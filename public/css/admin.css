@@ -43,93 +43,39 @@
 .xr-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* ============================================================
-   Тема VR-освіти: темна підложка з фіолетовим світінням, як у VR-лаунчері
+   Тема VR-освіти: світла, сіро-біла
    ============================================================ */
-.dark .fi-body {
-  color: #f4eef6;
-  background-color: #050307;
-  background-image:
-    radial-gradient(60% 45% at 18% 8%, rgba(154, 68, 206, .30), transparent 70%),
-    radial-gradient(45% 40% at 85% 20%, rgba(244, 114, 182, .14), transparent 70%),
-    radial-gradient(70% 55% at 50% 100%, rgba(123, 45, 174, .34), transparent 70%),
-    linear-gradient(180deg, #020103 0%, #120618 55%, #1d0a26 72%, #030204 100%);
-  background-attachment: fixed;
-  background-size: cover;
+.fi-body { background: #f5f6f7; }
+.fi-sidebar { background: #ffffff; border-right: 1px solid #e5e7eb; }
+.fi-topbar { background: #ffffff; --tw-ring-color: #e5e7eb; }
+.fi-sidebar-nav-groups .fi-sidebar-group-label { color: #6b7280; letter-spacing: .04em; }
+.fi-sidebar-item-btn { border-radius: 8px; }
+.fi-sidebar-item-active .fi-sidebar-item-btn,
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn { background: #f1f2f4; }
+.fi-sidebar-item-active .fi-sidebar-item-icon, .fi-sidebar-item-active .fi-sidebar-item-label { color: #111827; }
+
+.fi-section, .fi-ta-ctn, .fi-wi-stats-overview-stat, .fi-wi-chart, .fi-fo-tabs, .fi-in-entry-wrp-section, .fi-ta-empty-state {
+  background: #ffffff;
+  --tw-ring-color: #e5e7eb;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+  border-radius: 12px;
 }
+.fi-ta-header-cell, .fi-ta-header { background: #fafafa; }
+.fi-ta-row:hover { background: #f7f8f9; }
+.fi-wi-stats-overview-stat-value { color: #111827; }
 
-/* шапка і бокова панель: напівпрозорі, щоб градієнт просвічував */
-.dark .fi-sidebar { background: linear-gradient(180deg, rgba(46, 14, 46, .55), rgba(10, 7, 12, .75)); backdrop-filter: blur(10px); border-right: 1px solid rgba(255, 255, 255, .08); }
-.dark .fi-topbar { background: rgba(10, 7, 12, .55); backdrop-filter: blur(10px); --tw-ring-color: rgba(255, 255, 255, .08); }
-.dark .fi-sidebar-nav-groups .fi-sidebar-group-label { color: #b8a9bd; letter-spacing: .06em; }
-.dark .fi-sidebar-item-btn { border-radius: 12px; }
-.dark .fi-sidebar-item-btn:hover { background: rgba(255, 255, 255, .06); }
-.dark .fi-sidebar-item-active .fi-sidebar-item-btn,
-.dark .fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
-  background: linear-gradient(135deg, rgba(244, 114, 182, .28), rgba(154, 68, 206, .55));
-  box-shadow: 0 0 14px rgba(154, 68, 206, .35);
-}
-.dark .fi-sidebar-item-active .fi-sidebar-item-icon, .dark .fi-sidebar-item-active .fi-sidebar-item-label { color: #fff; }
-.dark .fi-logo img { filter: drop-shadow(0 0 10px rgba(154, 68, 206, .6)); }
+.fi-btn { border-radius: 8px; }
+.fi-badge { border-radius: 999px; }
 
-/* картки, таблиці, віджети: скло з градієнтом */
-.dark .fi-section,
-.dark .fi-ta-ctn,
-.dark .fi-wi-stats-overview-stat,
-.dark .fi-wi-chart,
-.dark .fi-fo-tabs,
-.dark .fi-in-entry-wrp-section,
-.dark .fi-ac-action-group,
-.dark .fi-ta-empty-state {
-  background: linear-gradient(160deg, rgba(46, 14, 46, .62), rgba(10, 7, 12, .78) 70%);
-  --tw-ring-color: rgba(255, 255, 255, .12);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .06);
-  border-radius: 18px;
-}
-.dark .fi-ta-header-cell, .dark .fi-ta-header { background: rgba(255, 255, 255, .03); }
-.dark .fi-ta-row:hover { background: rgba(154, 68, 206, .12); }
-.dark .fi-ta-table { --tw-divide-color: rgba(255, 255, 255, .06); }
-.dark .fi-wi-stats-overview-stat-value { color: #fff; }
-.dark .fi-wi-stats-overview-stat-label, .dark .fi-wi-stats-overview-stat-description { color: #c7b9cc; }
-
-/* випадайки, модалки, поля */
-.dark .fi-dropdown-panel, .dark .fi-modal-window {
-  background: linear-gradient(160deg, rgba(46, 14, 46, .96), rgba(10, 7, 12, .98) 70%);
-  --tw-ring-color: rgba(255, 255, 255, .16);
-  backdrop-filter: blur(8px);
-}
-.dark .fi-input-wrp { background: rgba(255, 255, 255, .04); --tw-ring-color: rgba(255, 255, 255, .22); border-radius: 10px; }
-.dark .fi-input-wrp:focus-within { --tw-ring-color: #C28BE6; box-shadow: 0 0 0 3px rgba(167, 139, 250, .25); }
-
-/* кнопки: фірмовий фіолет і піл-форма */
-.dark .fi-btn { border-radius: 999px; }
-.dark .fi-btn.fi-color-primary { background: #7B2DAE; box-shadow: 0 6px 20px rgba(123, 45, 174, .35); }
-.dark .fi-btn.fi-color-primary:hover { background: #9A44CE; box-shadow: 0 0 18px rgba(177, 60, 177, .6); }
-.dark .fi-badge { border-radius: 999px; }
-
-/* сторінка входу: картка як панель лаунчера */
-.dark .fi-simple-layout { background: transparent; }
-.dark .fi-simple-main {
-  background: linear-gradient(160deg, rgba(46, 14, 46, .92), rgba(10, 7, 12, .94) 70%);
-  border: 2px solid rgba(255, 255, 255, .72);
-  border-radius: 28px;
-  --tw-ring-color: transparent;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, .6), 0 0 60px rgba(160, 50, 170, .25), inset 0 1px 0 rgba(255, 255, 255, .08);
-  backdrop-filter: blur(6px);
-}
-.dark .fi-simple-main .fi-logo { margin-bottom: 1.25rem; }
-.dark .fi-simple-main .fi-logo img { height: 2.1rem; filter: drop-shadow(0 0 24px rgba(154, 68, 206, .55)); }
-.dark .fi-simple-main .fi-simple-header-heading { font-weight: 500; color: #f4eef6; }
-.dark .fi-simple-main .fi-btn.fi-color-primary { width: 100%; justify-content: center; padding-block: .8rem; font-size: 1rem; font-weight: 600; }
-.xr-login-sub { text-align: center; font-weight: 300; font-size: 12px; letter-spacing: 6px; text-transform: uppercase; color: #d9d2e3; margin: -.75rem 0 1.5rem; }
-
-/* наші власні блоки у темній темі */
-.dark .xr-matrix__cell { border-color: rgba(255, 255, 255, .12); background: rgba(255, 255, 255, .03); }
-.dark .xr-matrix__cell--on { border-color: rgba(63, 191, 115, .6); background: rgba(63, 191, 115, .08); }
-.dark .xr-matrix__line, .dark .xr-alerts__item small, .dark .xr-alerts__empty, .dark .xr-upload__meta { color: #b8a9bd; }
-.dark .xr-bar > span { background: linear-gradient(90deg, #7B2DAE, #C28BE6); }
-.dark .xr-link { color: #C28BE6; }
-.dark .xr-upload__drop { border-color: rgba(255, 255, 255, .2); }
-.dark .xr-upload__progress, .dark .xr-upload__done { border-color: rgba(255, 255, 255, .15); }
+/* сторінка входу */
+.fi-simple-layout { background: linear-gradient(180deg, #ffffff 0%, #eef0f2 100%); }
+.fi-simple-main { border: 1px solid #e5e7eb; border-radius: 16px; --tw-ring-color: transparent; box-shadow: 0 12px 32px rgba(0, 0, 0, .06); }
+.fi-simple-main .fi-logo { margin-bottom: 1.25rem; }
+.fi-simple-main .fi-logo img { height: 2rem; }
+.fi-simple-main .fi-btn.fi-color-primary { width: 100%; justify-content: center; padding-block: .75rem; font-size: 1rem; font-weight: 600; }
+.xr-login-sub { text-align: center; font-weight: 500; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: #6b7280; margin: -.75rem 0 1.5rem; }
+.xr-bar > span { background: #4b5563; }
+.xr-link { color: #374151; }
 
 /* VR-освіта: заголовки предметів у матриці доступів */
 .xr-matrix__subject { margin: 14px 0 8px; font-size: 12px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: var(--c); }
