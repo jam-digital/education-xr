@@ -8,6 +8,7 @@ use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -48,8 +49,15 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('Журнали')->collapsed(),
                 NavigationGroup::make('Система')->collapsed(),
             ])
+            ->navigationItems([
+                NavigationItem::make('Відкрити сайт')
+                    ->url(fn (): string => url('/'), shouldOpenInNewTab: true)
+                    ->icon('heroicon-o-globe-alt')
+                    ->sort(-100),
+            ])
+            ->renderHook(PanelsRenderHook::USER_MENU_BEFORE, fn () => '<a href="'.e(url('/')).'" target="_blank" rel="noopener" class="xr-site-link" title="Відкрити сайт у новій вкладці"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg><span>На сайт</span></a>')
             ->renderHook(PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE, fn () => '<div class="xr-login-sub">Адмінпанель освітньої VR-платформи</div>')
-            ->renderHook(PanelsRenderHook::HEAD_END, fn () => '<link rel="stylesheet" href="'.asset('css/admin.css').'?v=3"><script src="'.asset('js/build-upload.js').'?v=1"></script>')
+            ->renderHook(PanelsRenderHook::HEAD_END, fn () => '<link rel="stylesheet" href="'.asset('css/admin.css').'?v=4"><script src="'.asset('js/build-upload.js').'?v=1"></script>')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
