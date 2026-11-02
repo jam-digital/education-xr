@@ -25,6 +25,7 @@ if [ -n "${R2_ACCESS_KEY_ID:-}" ] && [ -n "${R2_SECRET_ACCESS_KEY:-}" ] && [ -n 
   setenv .env.app R2_ENDPOINT "${R2_ENDPOINT:-}"
 fi
 
+setenv .env.app VR_X_ACCEL 1
 [ -n "${LIQPAY_PUBLIC_KEY:-}" ] && setenv .env.app LIQPAY_PUBLIC_KEY "$LIQPAY_PUBLIC_KEY"
 [ -n "${LIQPAY_PRIVATE_KEY:-}" ] && setenv .env.app LIQPAY_PRIVATE_KEY "$LIQPAY_PRIVATE_KEY"
 

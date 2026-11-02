@@ -20,6 +20,8 @@ class Device extends Model
 
     protected $guarded = ['id'];
 
+    protected $hidden = ['api_token_hash'];
+
     protected function casts(): array
     {
         return [

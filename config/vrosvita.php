@@ -73,6 +73,19 @@ return [
         'phone' => env('CONTACT_PHONE', '+380 (67) 000 00 00'),
     ],
 
+    // API клієнта в окулярах (/api/v1/vr, ТЗ розділи 5–7)
+    'vr' => [
+        // Ed25519-ключ підпису токенів запуску й офлайн-сертифікатів: 32 байти base64. Порожньо = виводиться з APP_KEY
+        'signing_seed' => env('VR_SIGNING_SEED'),
+        'launch_token_ttl' => (int) env('VR_LAUNCH_TOKEN_TTL', 60),
+        'offline_ttl_days' => (int) env('VR_OFFLINE_TTL_DAYS', 7),
+        // Скільки запусків квиткового пулу окуляри можуть витратити офлайн до синхронізації
+        'offline_quota_per_device' => (int) env('VR_OFFLINE_QUOTA', 30),
+        'download_url_ttl_minutes' => (int) env('VR_DOWNLOAD_TTL', 120),
+        // nginx віддає білди з диска сам (X-Accel-Redirect на /_builds/), PHP лише перевіряє підпис посилання
+        'x_accel' => (bool) env('VR_X_ACCEL', false),
+    ],
+
     // Smart Alerts
     'alerts' => [
         'low_tickets' => 10,
