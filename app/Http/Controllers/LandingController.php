@@ -34,6 +34,47 @@ class LandingController extends Controller
         ]);
     }
 
+    /** Сторінка VR-уроку: опис, класи, методичка, відео, покупка, інші уроки предмета */
+    public function lesson(string $slug): View
+    {
+        $lesson = VrLesson::where('is_active', true)->where('app_key', $slug)->firstOrFail();
+        $lessons = VrLesson::where('is_active', true)->orderBy('sort')->orderBy('title')->get();
+
+        return view('landing.lesson', [
+            'lesson' => $lesson,
+            'related' => $lessons->where('subject_category', $lesson->subject_category)->where('id', '!=', $lesson->id)->take(3),
+            'lessons' => $lessons,
+            'subjects' => Subject::cases(),
+            'packages' => Storefront::packages(),
+        ]);
+    }
+
+    /** Оферта, політика конфіденційності, контакти */
+    public function page(string $page): View
+    {
+        return view("landing.pages.$page", ['seller' => config('vrosvita.seller'), 'contact' => config('vrosvita.contact')]);
+    }
+
+    public function sitemap(): Response
+    {
+        $urls = collect([route('landing'), route('page.contacts'), route('page.offer'), route('page.privacy')])
+            ->map(fn ($u) => ['loc' => $u, 'lastmod' => null])
+            ->concat(VrLesson::where('is_active', true)->orderBy('sort')->get()
+                ->map(fn (VrLesson $l) => ['loc' => route('lesson', $l->app_key), 'lastmod' => $l->updated_at?->toAtomString()]));
+
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n".'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+        foreach ($urls as $u) {
+            $xml .= '<url><loc>'.e($u['loc']).'</loc>'.($u['lastmod'] ? '<lastmod>'.$u['lastmod'].'</lastmod>' : '').'</url>';
+        }
+
+        return response($xml.'</urlset>', 200, ['Content-Type' => 'application/xml; charset=UTF-8']);
+    }
+
+    public function robots(): Response
+    {
+        return response("User-agent: *\nDisallow: /admin\nDisallow: /pay/\nDisallow: /api/\n\nSitemap: ".route('sitemap')."\n", 200, ['Content-Type' => 'text/plain; charset=UTF-8']);
+    }
+
     public function contact(Request $request): RedirectResponse
     {
         $data = $request->validate([

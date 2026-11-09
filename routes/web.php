@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\Route;
 
 // Лендінг VR-освіти: бібліотека уроків, пакети, форма зв'язку, оплата через LiqPay
 Route::get('/', [LandingController::class, 'index'])->name('landing');
+Route::get('uroky/{slug}', [LandingController::class, 'lesson'])->where('slug', '[a-z0-9-]+')->name('lesson');
+Route::get('kontakty', [LandingController::class, 'page'])->defaults('page', 'contacts')->name('page.contacts');
+Route::get('oferta', [LandingController::class, 'page'])->defaults('page', 'offer')->name('page.offer');
+Route::get('polityka-konfidentsiinosti', [LandingController::class, 'page'])->defaults('page', 'privacy')->name('page.privacy');
+Route::get('sitemap.xml', [LandingController::class, 'sitemap'])->name('sitemap');
+Route::get('robots.txt', [LandingController::class, 'robots'])->name('robots');
 Route::post('contact', [LandingController::class, 'contact'])->name('contact')->middleware('throttle:10,1');
 Route::post('buy', [LandingController::class, 'buy'])->name('buy')->middleware('throttle:10,1');
 Route::get('pay/{payment}', [LandingController::class, 'pay'])->name('pay.show');

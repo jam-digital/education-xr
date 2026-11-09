@@ -107,4 +107,29 @@ class LandingTest extends TestCase
         $this->assertTrue($licenses->every(fn ($l) => $l->lesson->subject_category === Subject::Chemistry));
         $this->assertTrue($licenses->contains('lesson_id', $chem->id));
     }
+
+    public function test_lesson_page_and_documents(): void
+    {
+        $lesson = $this->app1('chem-table');
+        $this->app1('chem-other');
+        $this->get('/')->assertSee('/uroky/chem-table', false);
+        $this->get('/uroky/chem-table')->assertOk()->assertSee('Хімія: Таблиця Менделєєва')
+            ->assertSee('og:title', false)->assertSee('LearningResource', false)
+            ->assertSee('data-app="'.$lesson->id.'"', false)->assertSee('/uroky/chem-other', false);
+        $this->get('/uroky/missing')->assertNotFound();
+        VrLesson::where('app_key', 'chem-other')->update(['is_active' => false]);
+        $this->get('/uroky/chem-other')->assertNotFound();
+
+        $this->get('/oferta')->assertOk()->assertSee('Публічна оферта')->assertSee(config('vrosvita.seller.edrpou'));
+        $this->get('/polityka-konfidentsiinosti')->assertOk()->assertSee('LiqPay');
+        $this->get('/kontakty')->assertOk()->assertSee(config('vrosvita.contact.email'));
+    }
+
+    public function test_sitemap_and_robots(): void
+    {
+        $this->app1('chem-table');
+        $this->get('/sitemap.xml')->assertOk()->assertHeader('Content-Type', 'application/xml; charset=UTF-8')
+            ->assertSee('/uroky/chem-table', false)->assertSee('/oferta', false);
+        $this->get('/robots.txt')->assertOk()->assertSee('Sitemap: ', false)->assertSee('Disallow: /admin', false);
+    }
 }

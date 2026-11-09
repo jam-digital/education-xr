@@ -41,14 +41,17 @@
           @if($isNew)<span class="new">NEW</span>@endif
         </div>
         <div class="body">
-          <h3>{{ $lesson->title }}</h3>
+          <h3><a href="{{ route('lesson', $lesson->app_key) }}">{{ $lesson->title }}</a></h3>
           <p>{{ $lesson->description }}</p>
           <div class="meta">
             @if($lesson->recommended_grades)<span class="pill">{{ $lesson->recommended_grades }}</span>@endif
             <span class="pill">{{ $lesson->max_session_duration_minutes }} хв</span>
             <span class="pill">{{ $lesson->default_tickets_count }} запусків у пакеті</span>
           </div>
-          <button class="btn primary small" type="button" data-buy="lesson" data-app="{{ $lesson->id }}">Купити запуски</button>
+          <div class="row start">
+            <a class="btn ghost small" href="{{ route('lesson', $lesson->app_key) }}">Детальніше</a>
+            <button class="btn primary small" type="button" data-buy="lesson" data-app="{{ $lesson->id }}">Купити запуски</button>
+          </div>
         </div>
       </article>
     @endforeach
@@ -103,49 +106,12 @@
     </div>
     <label>Повідомлення<textarea name="message" rows="4" maxlength="3000" placeholder="Скільки окулярів у класі, які предмети цікавлять">{{ old('_form') === 'contact' ? old('message') : '' }}</textarea></label>
     <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off">
+    <p class="muted small-text">Надсилаючи заявку, ви погоджуєтеся з <a href="{{ route('page.privacy') }}">політикою конфіденційності</a>.</p>
     <button class="btn primary" type="submit">Надіслати заявку</button>
   </form>
 </section>
 
-{{-- Модальне вікно покупки: дані закладу → /buy → LiqPay --}}
-<div class="modal" id="buyModal" hidden>
-  <div class="modal-card card">
-    <button class="x" type="button" data-close aria-label="Закрити">×</button>
-    <h3 id="buyTitle">Купити</h3>
-    <div class="muted" id="buyPrice"></div>
-    @if($errors->any() && old('_form') === 'buy')<div class="err">{{ $errors->first() }}</div>@endif
-    <form class="form" method="post" action="{{ route('buy') }}">
-      @csrf
-      <input type="hidden" name="_form" value="buy">
-      <input type="hidden" name="package" id="buyPackage" value="{{ old('package', 'lesson') }}">
-      <label id="lessonField">VR-урок
-        <select name="lesson_id" id="buyLesson">
-          @foreach($lessons->groupBy(fn ($l) => $l->subject_category->getLabel()) as $group => $items)
-            <optgroup label="{{ $group }}">
-              @foreach($items as $lesson)<option value="{{ $lesson->id }}" @selected(old('lesson_id') === $lesson->id)>{{ $lesson->title }}</option>@endforeach
-            </optgroup>
-          @endforeach
-        </select>
-      </label>
-      <label id="subjectField">Предмет
-        <select name="subject" id="buySubject">
-          @foreach($subjects as $s)
-            @if($lessons->contains('subject_category', $s))<option value="{{ $s->value }}" @selected(old('subject') === $s->value)>{{ $s->getLabel() }}</option>@endif
-          @endforeach
-        </select>
-      </label>
-      <div class="grid2">
-        <label>Ім'я<input name="name" required maxlength="120" value="{{ old('_form') === 'buy' ? old('name') : '' }}"></label>
-        <label>Email<input name="email" type="email" required maxlength="190" value="{{ old('_form') === 'buy' ? old('email') : '' }}"></label>
-        <label>Заклад освіти<input name="company" maxlength="190" value="{{ old('_form') === 'buy' ? old('company') : '' }}"></label>
-        <label>Телефон<input name="phone" maxlength="40" value="{{ old('_form') === 'buy' ? old('phone') : '' }}"></label>
-      </div>
-      <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off">
-      <p class="muted small-text">Після оплати доступ з'явиться в кабінеті закладу автоматично, а на email прийде рахунок і акт.</p>
-      <button class="btn primary" type="submit">Перейти до оплати</button>
-    </form>
-  </div>
-</div>
+@include('landing._buy')
 @endsection
 
 @push('scripts')
@@ -158,26 +124,6 @@
     document.querySelectorAll('.app[data-subject]').forEach(a => { a.hidden = t.dataset.filter !== 'all' && a.dataset.subject !== t.dataset.filter; });
   }));
 
-  const packs = @json(collect($packages)->map(fn ($p) => ['title' => $p['title'], 'price' => \App\Services\Storefront::priceLabel($p), 'scope' => $p['scope']]));
-  const modal = document.getElementById('buyModal'), title = document.getElementById('buyTitle'), price = document.getElementById('buyPrice');
-  const pkg = document.getElementById('buyPackage');
-  const lessonField = document.getElementById('lessonField'), lessonSel = document.getElementById('buyLesson');
-  const subjectField = document.getElementById('subjectField'), subjectSel = document.getElementById('buySubject');
-  function open(key, lessonId) {
-    const p = packs[key]; if (!p) return;
-    pkg.value = key; title.textContent = p.title; price.textContent = p.price;
-    lessonField.hidden = lessonSel.disabled = p.scope !== 'lesson';
-    subjectField.hidden = subjectSel.disabled = p.scope !== 'subject';
-    if (lessonId) lessonSel.value = lessonId;
-    modal.hidden = false; document.body.classList.add('modal-open');
-    const first = modal.querySelector('input[name=name]'); if (first) first.focus();
-  }
-  function close() { modal.hidden = true; document.body.classList.remove('modal-open'); }
-  document.querySelectorAll('[data-buy]').forEach(b => b.addEventListener('click', () => open(b.dataset.buy, b.dataset.app)));
-  modal.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
-  modal.addEventListener('click', e => { if (e.target === modal) close(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) close(); });
-  @if($errors->any() && old('_form') === 'buy') open(@json(old('package', 'lesson')), @json(old('lesson_id'))); @endif
 })();
 </script>
 @endpush
