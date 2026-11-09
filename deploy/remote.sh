@@ -1,5 +1,5 @@
 #!/bin/sh
-# Runs on the server from the GitHub Actions deploy job, in /opt/education-xr (same VPS as the museum portal in /opt/mincult).
+# Runs on the server from the GitHub Actions deploy job, in /opt/education-xr (.10 behind edge-caddy; earlier .152 behind the portal Caddy).
 # Needs DOMAIN and ADMIN_PASSWORD. Images are built on GitHub (PREBUILT=1): this VPS builds nothing.
 set -eu
 cd /opt/education-xr
@@ -29,7 +29,8 @@ setenv .env.app VR_X_ACCEL 1
 [ -n "${LIQPAY_PUBLIC_KEY:-}" ] && setenv .env.app LIQPAY_PUBLIC_KEY "$LIQPAY_PUBLIC_KEY"
 [ -n "${LIQPAY_PRIVATE_KEY:-}" ] && setenv .env.app LIQPAY_PRIVATE_KEY "$LIQPAY_PRIVATE_KEY"
 
-docker network inspect mincult_default >/dev/null 2>&1 || { echo "mincult_default network is missing: deploy the museum portal first"; exit 1; }
+# .152: мережу створює музейний портал; .10: її створює edge-caddy (move-to-10.sh), а якщо нема — створюємо самі
+docker network inspect mincult_default >/dev/null 2>&1 || docker network create mincult_default >/dev/null
 
 C="docker compose -p education-xr -f docker-compose.yml -f docker-compose.prod.yml"
 [ "${PREBUILT:-0}" = 1 ] || COMPOSE_PARALLEL_LIMIT=1 COMPOSE_BAKE=false $C build
@@ -38,7 +39,9 @@ $C up -d --no-build --force-recreate edu-web   # recreate, not restart: nginx.co
 
 mkdir -p /opt/caddy-sites
 sed "s|EDU_DOMAIN|$DOMAIN|" deploy/education-xr.caddy > /opt/caddy-sites/education-xr.caddy
+# Caddy порталу (.152) або edge-caddy (.10); обидва читають /opt/caddy-sites як /etc/caddy/sites
 CADDY="$(docker ps -qf label=com.docker.compose.project=mincult -f label=com.docker.compose.service=caddy | head -1)"
+[ -n "$CADDY" ] || CADDY="$(docker ps -qf name=^edge-caddy$ | head -1)"
 if [ -n "$CADDY" ] && docker exec "$CADDY" test -f /etc/caddy/sites/education-xr.caddy; then
   # одна невалідна *.caddy зупиняє reload для всіх сайтів сервера: спершу validate, і при помилці прибираємо свій файл
   if docker exec "$CADDY" caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile; then
@@ -48,7 +51,7 @@ if [ -n "$CADDY" ] && docker exec "$CADDY" test -f /etc/caddy/sites/education-xr
     echo "::error::caddy validate failed, education-xr.caddy removed, other sites untouched"; exit 1
   fi
 else
-  echo "::warning::Caddy of the museum portal does not mount /opt/caddy-sites; the site is not reachable from outside"
+  echo "::warning::No Caddy (portal or edge-caddy) mounts /opt/caddy-sites; the site is not reachable from outside"
 fi
 docker image prune -f >/dev/null
 $C ps
