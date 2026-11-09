@@ -149,3 +149,37 @@ h2.left { text-align: left; font-size: 22px; margin: 32px 0 12px; }
 .req dd { margin: 0; color: var(--ink); overflow-wrap: anywhere; }
 @media (max-width: 480px) { .req { grid-template-columns: 1fr; } .req dd { margin-bottom: 6px; } }
 .footlinks { display: flex; gap: 16px; flex-wrap: wrap; width: 100%; }
+
+/* кабінет закладу */
+.cab-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 8px; padding-top: 32px; }
+.cab-title { font-size: clamp(22px, 3vw, 28px); font-weight: 800; color: var(--ink); }
+.cab-tabs { display: flex; gap: 6px; flex-wrap: wrap; padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+.cab-tabs a { text-decoration: none; padding: 8px 14px; border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--text); }
+.cab-tabs a:hover { background: #eef0f2; }
+.cab-tabs a.active { background: var(--accent); color: #fff; }
+.cab { padding-top: 24px; }
+.cab > .ok { margin-top: 0; }
+.facts.left { justify-content: flex-start; margin: 0 0 8px; }
+.card.flush { padding: 0; overflow: hidden; }
+.card.empty, .card.note { margin-bottom: 20px; }
+.tablewrap { overflow-x: auto; }
+.tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+.tbl th { text-align: left; font-size: 12px; font-weight: 600; color: var(--muted); background: #fafafa; padding: 10px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.tbl td { padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; color: var(--ink); }
+.tbl tr:last-child td { border-bottom: 0; }
+.tbl tr.off td { color: var(--muted); }
+.tbl a { color: var(--ink); }
+.tbl .r { text-align: right; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
+.nowrap { white-space: nowrap; }
+.badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: #f3f4f6; color: var(--text); white-space: nowrap; }
+.badge.ok-b { background: #ecfdf3; color: #14532d; }
+.badge.off-b { background: #fef2f2; color: #991b1b; }
+td.warn { color: #92400e; }
+.cab-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; align-items: start; }
+h2.top { margin-top: 0; }
+.login { padding-top: 48px; }
+.doc-h1 { margin: 0 0 8px; }
+.form label.inline { display: flex; align-items: center; gap: 8px; font-weight: 400; }
+.form label.inline input { width: auto; }
+@media (max-width: 640px) { .cab-head { flex-wrap: wrap; } }

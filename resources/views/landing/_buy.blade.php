@@ -32,7 +32,7 @@
         <label>Телефон<input name="phone" maxlength="40" value="{{ old('_form') === 'buy' ? old('phone') : '' }}"></label>
       </div>
       <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off">
-      <p class="muted small-text">Натискаючи «Перейти до оплати», ви приймаєте <a href="{{ route('page.offer') }}" target="_blank">публічну оферту</a> і <a href="{{ route('page.privacy') }}" target="_blank">політику конфіденційності</a>. Після оплати доступ з'явиться в кабінеті закладу автоматично, а на email прийде рахунок і акт.</p>
+      <p class="muted small-text">Натискаючи «Перейти до оплати», ви приймаєте <a href="{{ route('page.offer') }}" target="_blank">публічну оферту</a> і <a href="{{ route('page.privacy') }}" target="_blank">політику конфіденційності</a>. Після оплати доступ відкриється автоматично, а рахунок і акт будуть у кабінеті закладу.</p>
       <button class="btn primary" type="submit">Перейти до оплати</button>
     </form>
   </div>

@@ -31,7 +31,11 @@
     <a href="{{ route('landing') }}#packages">Пакети</a>
     <a href="{{ route('page.contacts') }}">Контакти</a>
   </nav>
-  <a class="btn ghost small" href="{{ url('/admin/login') }}">Вхід</a>
+  @if(auth()->user()?->role === \App\Enums\Role::Client)
+    <a class="btn ghost small" href="{{ route('cabinet') }}">Кабінет</a>
+  @else
+    <a class="btn ghost small" href="{{ route('cabinet.login') }}">Кабінет школи</a>
+  @endif
 </header>
 <main>
 @yield('content')
@@ -47,6 +51,7 @@
     <a href="{{ route('page.contacts') }}">Контакти</a>
     <a href="{{ route('page.offer') }}">Публічна оферта</a>
     <a href="{{ route('page.privacy') }}">Політика конфіденційності</a>
+    <a href="{{ url('/admin/login') }}" class="muted">Вхід для персоналу</a>
   </nav>
 </footer>
 @stack('scripts')

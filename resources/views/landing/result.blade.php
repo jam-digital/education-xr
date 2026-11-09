@@ -7,7 +7,7 @@
       <div class="ok-badge">✓</div>
       <h2>Оплату отримано</h2>
       <p class="lead">{{ $payment->grantLabel() }} уже активовано для {{ $payment->user->email }}.</p>
-      <p class="muted">Зареєструйте шкільні окуляри за серійним номером, і уроки з'являться у VR-Osvita Client. Рахунок і акт надіслано на пошту.</p>
+      <p class="muted">Менеджер VR-освіти надішле пароль закладу на {{ $payment->user->email }}. З ним школа входить у застосунок «VR-освіта» на окулярах і в <a href="{{ route('cabinet.login') }}">кабінет закладу</a>, де лежать рахунок і акт.</p>
     @elseif($payment->status === \App\Enums\PaymentStatus::Failed)
       <h2>Оплата не пройшла</h2>
       <p class="lead">Платіж {{ $payment->invoice_number }} відхилено банком або скасовано.</p>

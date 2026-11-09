@@ -429,7 +429,7 @@ class VrApiService
         ];
     }
 
-    private function accessSummary(Collection $licenses): array
+    public function accessSummary(Collection $licenses): array
     {
         $usable = $licenses->filter->isUsable();
         $time = $usable->filter(fn ($l) => $l->license_type->isTimeBased())
